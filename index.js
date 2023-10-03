@@ -5,6 +5,10 @@ import express from "express";
 
 import {MongoClient} from "mongodb";
 
+import moviesRouter from "./Router/movies.router.js";  // new - Day6
+
+import cors from "cors";
+
 const app = express();
 
 // console.log(process.env);
@@ -16,17 +20,18 @@ const PORT = process.env.PORT;
 // const MONGO_URL = "mongodb://127.0.0.1"  
 const MONGO_URL = process.env.MONGO_URL;
 
-const client = new MongoClient(MONGO_URL);   // -> dial
+export const client = new MongoClient(MONGO_URL);   // -> dial  // new - export - Day6
 
 await client.connect();                      // -> call
 console.log("Mongo is connected !!!");
+
+app.use(cors());                         // thrid party middleware package
 
 app.use(express.json())
 
 app.get("/", function(request, response){
   response.send("Hellow World");
 });
-
 
 // const movies=[
 //   //https://ragavkumarv.com/blog/sample-data/#movie-data-with-trailer 
@@ -120,81 +125,87 @@ app.get("/", function(request, response){
 //   }
 // ]
 
-app.get("/movies", async function(request, response){
-  // db.movies.find({})
-  // const movies = await client.db("test").collection("movies").find({});
-  const movies = await client.db("test").collection("movies").find({}).toArray();
-  response.send(movies);
-  console.log(movies)
- });
+// -> This API End Point moved to movies.js on Day6
+// app.get("/movies", async function(request, response){
+//   // db.movies.find({})
+//   // const movies = await client.db("test").collection("movies").find({});
+//   const movies = await client.db("test").collection("movies").find({}).toArray();
+//   response.send(movies);
+//   console.log(movies)
+//  });
 
 // app.get("/movies", function(request, response){
 //   response.send(movies);
 // });
 
-app.get("/movies/:id", async function(request, response){
-  const {id} = request.params;
-  console.log(id);
-  // const Movie = movies.find((mv) => mv.id === id)                                -> Local cmd
+// -> This API End Point moved to movies.js on Day6
+// app.get("/movies/:id", async function(request, response){
+//   const {id} = request.params;
+//   console.log(id);
+//   // const Movie = movies.find((mv) => mv.id === id)                                -> Local cmd
   
-  //db.movies.findOne({id: "100"})                                                  -> MDB cmd
-  // const Movie = await client.db('test').collection('movies').findOne({id: "100"}) //-> MDB cmd understandable by node
-  const Movie = await client
-    .db('test')
-    .collection('movies')
-    .findOne({id: id})
-  console.log(Movie);
-  Movie ? response.send(Movie) : response.status(404).send({message:'Movie Not Found'})
-});
+//   //db.movies.findOne({id: "100"})                                                  -> MDB cmd
+//   // const Movie = await client.db('test').collection('movies').findOne({id: "100"}) //-> MDB cmd understandable by node
+//   const Movie = await client
+//     .db('test')
+//     .collection('movies')
+//     .findOne({id: id})
+//   console.log(Movie);
+//   Movie ? response.send(Movie) : response.status(404).send({message:'Movie Not Found'})
+// });
 
+// -> This API End Point moved to movies.js on Day6
 // app.post("/movies", express.json(), async function (request,response){
-app.post("/movies", async function (request,response){
-  const data = request.body;
-  console.log(data);
-  //db.movies.insertMany(data)
-  const result = await client
-    .db("test")
-    .collection("movies")
-    .insertMany(data);
+// app.post("/movies", async function (request,response){
+//   const data = request.body;
+//   console.log(data);
+//   //db.movies.insertMany(data)
+//   const result = await client
+//     .db("test")
+//     .collection("movies")
+//     .insertMany(data);
  
-  response.send(result);
-});
+//   response.send(result);
+// });
 
+// -> This API End Point moved to movies.js on Day6
 // Delete operation as been added on NodeD6
-app.delete("/movies/:id", async function (request, response){   // new - delete
-  const{id} = request.params;
-  console.log(id);
-  // db.movies.deleteOne({id:"1000"})                           // new - modified db command to delete operation
+// app.delete("/movies/:id", async function (request, response){   // new - delete
+//   const{id} = request.params;
+//   console.log(id);
+//   // db.movies.deleteOne({id:"1000"})                           // new - modified db command to delete operation
 
-  const result = await client                                   // new - result
-    .db("test")
-    .collection("movies")
-    .deleteOne({id:id});                                        // new - modified db command to delete operation
+//   const result = await client                                   // new - result
+//     .db("test")
+//     .collection("movies")
+//     .deleteOne({id:id});                                        // new - modified db command to delete operation
 
-  console.log(result);                                          // new - result
-  // result
-  //   ? response.send(result)                                  // new - result
-  //   : response.status(404).send({message:"Movie not found"});
-  result.deletedCount >= 1
-    ? response.send({message: "Movie deleted successfully"})    // new
-    : response.status(404).send({message:"Movie not found"});
-});
+//   console.log(result);                                          // new - result
+//   // result
+//   //   ? response.send(result)                                  // new - result
+//   //   : response.status(404).send({message:"Movie not found"});
+//   result.deletedCount >= 1
+//     ? response.send({message: "Movie deleted successfully"})    // new
+//     : response.status(404).send({message:"Movie not found"});
+// });
 
 
-app.put("/movies/:id", async function (request, response){   // -> new - put, express.json
-  const{id} = request.params;
-  const data = request.body;                                 // -> new 
-  console.log(data);                                         // -> new
-  console.log(id);
-  // db.movies.updateOne({id:id}, {$set:data})          -> new - modified db command to put operation with $set
+// -> This API End Point moved to movies.js on Day6
+// app.put("/movies/:id", async function (request, response){   // -> new - put, express.json
+//   const{id} = request.params;
+//   const data = request.body;                                 // -> new 
+//   console.log(data);                                         // -> new
+//   console.log(id);
+//   // db.movies.updateOne({id:id}, {$set:data})          -> new - modified db command to put operation with $set
 
-  const result = await client                                // -> new - result
-    .db("test")
-    .collection("movies")
-    .updateOne({id:id},{$set:data});                         // -> new - modified db command to put operation with $set
-  response.send(result)                                      // -> new - response.send(result)
- }
-);
+//   const result = await client                                // -> new - result
+//     .db("test")
+//     .collection("movies")
+//     .updateOne({id:id},{$set:data});                         // -> new - modified db command to put operation with $set
+//   response.send(result)                                      // -> new - response.send(result)
+// });
+
+app.use('/movies', moviesRouter);
 
 app.listen(PORT, () => console.log(`The server started in: ${PORT}`))
 
